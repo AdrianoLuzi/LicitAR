@@ -1,0 +1,1847 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>LicitAR | Sistema de Análisis de Pliegos y Vinculación Minera</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Tipografía clásica, sobria e institucional -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome Icons CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"IBM Plex Sans"', 'sans-serif'],
+            mono: ['"IBM Plex Mono"', 'monospace'],
+          },
+          colors: {
+            carbon: '#222121',
+            acero: '#4E6D93',
+            salvia: '#C8DDA4',
+            blanco: '#FFFFFF',
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Estilos estrictamente planos, mates y minimalistas */
+    * {
+      box-sizing: border-box;
+      box-shadow: none !important;
+      text-shadow: none !important;
+    }
+    body {
+      background-color: #FFFFFF;
+      color: #222121;
+      font-family: 'IBM Plex Sans', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+      overflow-x: hidden;
+      transition: background-color 0.15s ease, color 0.15s ease;
+    }
+    /* Bordes sobrios de 1px */
+    .border-matte {
+      border: 1px solid #222121;
+    }
+    .border-subtle {
+      border: 1px solid rgba(34, 33, 33, 0.22);
+    }
+    .border-acero {
+      border: 1px solid #4E6D93;
+    }
+    /* Botones planos mates sin gradientes ni brillos */
+    .btn-acero {
+      background-color: #4E6D93;
+      color: #FFFFFF;
+      border: 1px solid #4E6D93;
+      border-radius: 3px;
+      transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+    }
+    .btn-acero:hover, .btn-acero:active {
+      background-color: #222121;
+      border-color: #222121;
+      color: #FFFFFF;
+    }
+    .btn-carbon {
+      background-color: #222121;
+      color: #FFFFFF;
+      border: 1px solid #222121;
+      border-radius: 3px;
+      transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+    }
+    .btn-carbon:hover, .btn-carbon:active {
+      background-color: #4E6D93;
+      border-color: #4E6D93;
+      color: #FFFFFF;
+    }
+    .btn-outline {
+      background-color: #FFFFFF;
+      color: #222121;
+      border: 1px solid #222121;
+      border-radius: 3px;
+      transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+    }
+    .btn-outline:hover, .btn-outline:active {
+      background-color: #C8DDA4;
+      color: #222121;
+    }
+    .tag-salvia {
+      background-color: #C8DDA4;
+      color: #222121 !important;
+      border: 1px solid #222121;
+      border-radius: 2px;
+    }
+    .tag-acero {
+      background-color: #4E6D93;
+      color: #FFFFFF !important;
+      border-radius: 2px;
+    }
+    .tag-neutral {
+      background-color: #FFFFFF;
+      color: #222121;
+      border: 1px solid rgba(34, 33, 33, 0.35);
+      border-radius: 2px;
+    }
+
+    /* =====================================================
+       MODO OSCURO MATE ESTRICTO (#222121, #4E6D93, #C8DDA4, #FFFFFF)
+       ===================================================== */
+    html.dark body {
+      background-color: #222121;
+      color: #FFFFFF;
+    }
+    html.dark header,
+    html.dark nav.fixed {
+      background-color: #222121 !important;
+      border-color: #4E6D93 !important;
+    }
+    /* Superficies planas mates en modo oscuro */
+    html.dark .bg-blanco {
+      background-color: #2A2929 !important;
+      color: #FFFFFF;
+    }
+    html.dark header.bg-blanco {
+      background-color: #222121 !important;
+    }
+    /* Tipografía en modo oscuro */
+    html.dark .text-carbon {
+      color: #FFFFFF !important;
+    }
+    html.dark .text-carbon\/90,
+    html.dark .text-carbon\/85,
+    html.dark .text-carbon\/80,
+    html.dark .text-carbon\/75,
+    html.dark .text-carbon\/70,
+    html.dark .text-carbon\/60 {
+      color: rgba(255, 255, 255, 0.78) !important;
+    }
+    html.dark .text-acero {
+      color: #C8DDA4 !important;
+    }
+    /* Bordes mates en modo oscuro */
+    html.dark .border-matte,
+    html.dark .border-carbon {
+      border-color: #4E6D93 !important;
+    }
+    html.dark .border-subtle,
+    html.dark .border-carbon\/40,
+    html.dark .border-carbon\/30,
+    html.dark .border-carbon\/25,
+    html.dark .border-carbon\/20,
+    html.dark .border-carbon\/15 {
+      border-color: rgba(200, 221, 164, 0.25) !important;
+    }
+    /* Superficies con acento salvia o acero en modo oscuro */
+    html.dark .bg-salvia\/45,
+    html.dark .bg-salvia\/40,
+    html.dark .bg-salvia\/35,
+    html.dark .bg-salvia\/30,
+    html.dark .bg-salvia\/20 {
+      background-color: rgba(78, 109, 147, 0.28) !important;
+    }
+    /* Etiquetas con fondo #C8DDA4 siempre mantienen texto #222121 para máximo contraste */
+    html.dark .bg-salvia,
+    html.dark .tag-salvia {
+      background-color: #C8DDA4 !important;
+      color: #222121 !important;
+      border-color: #C8DDA4 !important;
+    }
+    html.dark .tag-neutral {
+      background-color: #222121 !important;
+      color: #FFFFFF !important;
+      border-color: #4E6D93 !important;
+    }
+    /* Botones mates en modo oscuro */
+    html.dark .btn-acero {
+      background-color: #4E6D93;
+      color: #FFFFFF;
+      border-color: #4E6D93;
+    }
+    html.dark .btn-acero:hover, html.dark .btn-acero:active {
+      background-color: #C8DDA4;
+      color: #222121 !important;
+      border-color: #C8DDA4;
+    }
+    html.dark .btn-carbon {
+      background-color: #C8DDA4;
+      color: #222121 !important;
+      border-color: #C8DDA4;
+    }
+    html.dark .btn-carbon:hover, html.dark .btn-carbon:active {
+      background-color: #4E6D93;
+      color: #FFFFFF !important;
+      border-color: #4E6D93;
+    }
+    html.dark .btn-outline {
+      background-color: #222121;
+      color: #FFFFFF;
+      border-color: #C8DDA4;
+    }
+    html.dark .btn-outline:hover, html.dark .btn-outline:active {
+      background-color: #C8DDA4;
+      color: #222121 !important;
+    }
+    /* Inputs y Selects en modo oscuro */
+    html.dark input,
+    html.dark select {
+      background-color: #222121 !important;
+      color: #FFFFFF !important;
+      border-color: #4E6D93 !important;
+    }
+    html.dark input::placeholder {
+      color: rgba(255, 255, 255, 0.5) !important;
+    }
+
+    /* Ocultar barra de scroll horizontal en filtros móviles */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col pb-20 md:pb-10">
+
+  <!-- BARRA SUPERIOR INSTITUCIONAL: LÍMITE DEL DESAFÍO 3 Y SOBERANÍA TECNOLÓGICA -->
+  <div class="bg-carbon text-blanco border-b border-carbon px-4 py-2 text-xs">
+    <div class="max-w-6xl mx-auto flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
+      <div class="flex items-center gap-2">
+        <span class="px-1.5 py-0.5 bg-salvia text-carbon font-mono font-semibold text-[10px] rounded-[2px]">
+          OSI 1.0 · IA ABIERTA
+        </span>
+        <span>Procesamiento local auditado en San Juan (Know-Why).</span>
+      </div>
+      <div class="font-medium text-salvia">
+        Aviso Desafío 3: Herramienta de pre-diagnóstico. No reemplaza los procesos oficiales de homologación.
+      </div>
+    </div>
+  </div>
+
+  <!-- ENCABEZADO PRINCIPAL (MATE Y MINIMALISTA) -->
+  <header class="sticky top-0 z-30 bg-blanco border-b border-carbon">
+    <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between gap-3">
+      
+      <!-- Identidad de Marca: LicitAR -->
+      <div class="flex items-center gap-3 cursor-pointer" onclick="switchTab('home')">
+        <div class="w-9 h-9 bg-acero text-blanco flex items-center justify-center rounded-[3px] font-mono font-bold text-base border border-carbon">
+          LA
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="font-bold text-xl tracking-tight text-carbon">LicitAR</span>
+            <span class="text-[10px] font-mono uppercase px-1.5 py-0.5 bg-salvia text-carbon border border-carbon rounded-[2px] font-semibold">
+              San Juan
+            </span>
+          </div>
+          <p class="text-[11px] text-carbon/70 hidden sm:block">Análisis Automático de Pliegos y Vinculación PyME</p>
+        </div>
+      </div>
+
+      <!-- Navegación de Escritorio -->
+      <nav class="hidden md:flex items-center gap-1">
+        <button onclick="switchTab('home')" id="nav-desk-home" class="px-4 py-2 text-sm font-semibold rounded-[3px] bg-acero text-blanco">
+          Home
+        </button>
+        <button onclick="switchTab('categorias')" id="nav-desk-categorias" class="px-4 py-2 text-sm font-medium rounded-[3px] text-carbon hover:bg-salvia/50">
+          Categorías
+        </button>
+        <button onclick="switchTab('destacados')" id="nav-desk-destacados" class="px-4 py-2 text-sm font-medium rounded-[3px] text-carbon hover:bg-salvia/50">
+          Destacados
+        </button>
+        <button onclick="switchTab('perfiles')" id="nav-desk-perfiles" class="px-4 py-2 text-sm font-medium rounded-[3px] text-carbon hover:bg-salvia/50">
+          Perfiles
+        </button>
+      </nav>
+
+      <!-- Controles de Simulación, Tema Oscuro y Carga -->
+      <div class="flex items-center gap-2">
+        <div class="hidden lg:flex items-center gap-2 border border-carbon px-2.5 py-1.5 rounded-[3px] bg-blanco">
+          <label for="globalPymeSelect" class="text-[11px] font-medium text-carbon/80">PyME activa:</label>
+          <select id="globalPymeSelect" onchange="handleGlobalPymeChange(this.value)" class="bg-blanco text-xs font-semibold text-acero focus:outline-none cursor-pointer">
+            <!-- Poblar por JS -->
+          </select>
+        </div>
+
+        <!-- Botón Mate de Modo Oscuro / Claro -->
+        <button 
+          onclick="toggleDarkMode()" 
+          id="themeToggleBtn" 
+          title="Alternar Modo Oscuro / Claro"
+          class="btn-outline px-2.5 py-2 text-xs font-semibold flex items-center gap-1.5"
+        >
+          <i id="themeToggleIcon" class="fa-solid fa-moon"></i>
+          <span id="themeToggleText" class="hidden sm:inline">Oscuro</span>
+        </button>
+
+        <button onclick="openUploadModal()" class="btn-acero px-3 py-2 text-xs sm:text-sm font-semibold flex items-center gap-1.5">
+          <i class="fa-regular fa-file-pdf"></i>
+          <span>Cargar Pliego</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Barra de Selección de PyME para Celulares -->
+    <div class="lg:hidden bg-salvia/40 border-t border-carbon/20 px-4 py-2 flex items-center justify-between gap-2">
+      <span class="text-xs font-semibold text-carbon">Evaluando como PyME:</span>
+      <select id="mobilePymeSelect" onchange="handleGlobalPymeChange(this.value)" class="bg-blanco border border-carbon text-xs font-semibold text-carbon px-2 py-1 rounded-[2px] focus:outline-none max-w-[60%]">
+        <!-- Poblar por JS -->
+      </select>
+    </div>
+  </header>
+
+  <!-- CONTENEDOR PRINCIPAL -->
+  <main class="flex-grow max-w-6xl w-full mx-auto px-4 pt-6 pb-10">
+
+    <!-- ==========================================
+         SECCIÓN 1: HOME
+         ========================================== -->
+    <section id="view-home" class="space-y-6">
+      
+      <!-- Encabezado Sobrio y Buscador -->
+      <div class="border-matte rounded-[3px] p-5 sm:p-6 bg-blanco space-y-4">
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-carbon/20 pb-4">
+          <div class="space-y-1 max-w-2xl">
+            <span class="text-xs font-mono uppercase tracking-wider text-acero font-semibold">
+              Caso N° 9 · Desafío 3 Proveedores Locales
+            </span>
+            <h1 class="text-2xl sm:text-3xl font-bold text-carbon leading-snug">
+              Análisis documental de pliegos y vinculación minera
+            </h1>
+            <p class="text-sm text-carbon/80 leading-relaxed">
+              Plataforma de lectura automatizada de licitaciones mineras en San Juan. Identifica requisitos excluyentes con cita textual al documento original y sugiere consorcios (UTEs) entre PyMEs locales registradas en REPROMIN.
+            </p>
+          </div>
+          <div class="shrink-0">
+            <button onclick="openAnalyzerModal(tendersData[0].id)" class="btn-carbon w-full sm:w-auto px-4 py-2.5 text-xs font-semibold">
+              Ver Ejemplo de Pliego Analizado
+            </button>
+          </div>
+        </div>
+
+        <!-- Buscador en tiempo real -->
+        <div class="space-y-2">
+          <label for="searchInput" class="block text-xs font-semibold uppercase tracking-wider text-carbon">
+            Buscar licitaciones por código, minera, rubro o norma (ej. Veladero, ISO 9001, Logística)
+          </label>
+          <div class="flex flex-col sm:flex-row gap-2">
+            <div class="relative flex-grow">
+              <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-carbon/60 text-sm"></i>
+              <input 
+                type="text" 
+                id="searchInput" 
+                oninput="renderHomeTenders()" 
+                placeholder="Escribir término de búsqueda..." 
+                class="w-full pl-10 pr-4 py-2.5 bg-blanco border border-carbon rounded-[3px] text-sm text-carbon placeholder-carbon/50 focus:outline-none focus:border-acero"
+              >
+            </div>
+            <button onclick="clearSearch()" id="clearSearchBtn" class="hidden btn-outline px-4 py-2.5 text-xs font-semibold">
+              Limpiar filtro
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Indicadores Resumen (Diseño Plano) -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        <div class="border-subtle rounded-[3px] p-4 bg-blanco">
+          <span class="text-xs text-carbon/70 block">Pliegos Activos</span>
+          <strong class="text-2xl font-bold text-carbon font-mono">6 Pliegos</strong>
+          <span class="text-[11px] text-acero block mt-0.5">Lectura IA verificada</span>
+        </div>
+        <div class="border-subtle rounded-[3px] p-4 bg-blanco">
+          <span class="text-xs text-carbon/70 block">Padrón Oficial</span>
+          <strong class="text-2xl font-bold text-carbon font-mono">REPROMIN</strong>
+          <span class="text-[11px] text-acero block mt-0.5">Lic. Pública 03-2026</span>
+        </div>
+        <div class="border-subtle rounded-[3px] p-4 bg-salvia/35">
+          <span class="text-xs text-carbon/80 block">Vinculación PyME</span>
+          <strong class="text-2xl font-bold text-carbon font-mono">UTEs 100%</strong>
+          <span class="text-[11px] text-carbon block mt-0.5">Cobertura de brechas</span>
+        </div>
+        <div class="border-subtle rounded-[3px] p-4 bg-blanco">
+          <span class="text-xs text-carbon/70 block">Arquitectura</span>
+          <strong class="text-2xl font-bold text-acero font-mono">Abierta</strong>
+          <span class="text-[11px] text-carbon/80 block mt-0.5">Ley Nac. 27.506</span>
+        </div>
+      </div>
+
+      <!-- Píldoras de Filtro Rápido -->
+      <div class="space-y-2">
+        <div class="flex items-center justify-between">
+          <h2 class="text-sm font-bold uppercase tracking-wider text-carbon">Listado General de Licitaciones</h2>
+          <span id="tenderCountLabel" class="text-xs font-mono text-carbon/80">6 resultados</span>
+        </div>
+        <div id="homeCategoryPills" class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
+          <!-- Poblar por JS -->
+        </div>
+      </div>
+
+      <!-- Grilla de Licitaciones -->
+      <div id="homeTendersGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Poblar por JS -->
+      </div>
+
+    </section>
+
+    <!-- ==========================================
+         SECCIÓN 2: CATEGORÍAS
+         ========================================== -->
+    <section id="view-categorias" class="hidden space-y-6">
+      <div class="border-b border-carbon pb-3 flex flex-col sm:flex-row sm:items-end justify-between gap-2">
+        <div>
+          <span class="text-xs font-mono uppercase text-acero font-semibold">Clasificación Industrial</span>
+          <h2 class="text-2xl font-bold text-carbon">Categorías de Proveedores y Licitaciones</h2>
+        </div>
+        <p class="text-xs text-carbon/75 max-w-md">
+          Seleccione un rubro para filtrar los pliegos activos y las PyMEs de San Juan con capacidad técnica declarada.
+        </p>
+      </div>
+
+      <!-- Tarjetas de Rubros -->
+      <div id="categoriesGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+        <!-- Poblar por JS -->
+      </div>
+
+      <!-- Contenedor de Resultados por Categoría -->
+      <div class="border-matte rounded-[3px] p-4 sm:p-5 bg-blanco space-y-6">
+        <div class="flex flex-wrap items-center justify-between gap-2 border-b border-carbon/20 pb-3">
+          <div class="flex items-center gap-2">
+            <span id="selectedCategoryBadge" class="tag-acero px-2.5 py-1 text-xs font-mono font-semibold">
+              Todas las Categorías
+            </span>
+            <h3 class="font-bold text-base text-carbon">Resultados del Rubro</h3>
+          </div>
+          <button onclick="selectCategoryFilter('TODAS')" class="text-xs font-semibold text-acero underline">
+            Mostrar todos los rubros
+          </button>
+        </div>
+
+        <div class="space-y-3">
+          <h4 class="text-xs font-mono font-semibold uppercase tracking-wider text-carbon/80">
+            1. Pliegos Licitatorios en este Rubro
+          </h4>
+          <div id="categoryTendersList" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+        </div>
+
+        <div class="space-y-3 pt-2 border-t border-carbon/20">
+          <h4 class="text-xs font-mono font-semibold uppercase tracking-wider text-carbon/80">
+            2. PyMEs de San Juan Registradas en el Rubro
+          </h4>
+          <div id="categoryPymesList" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================
+         SECCIÓN 3: DESTACADOS & UTEs
+         ========================================== -->
+    <section id="view-destacados" class="hidden space-y-6">
+      <div class="border-b border-carbon pb-3 flex flex-col sm:flex-row sm:items-end justify-between gap-2">
+        <div>
+          <span class="text-xs font-mono uppercase text-acero font-semibold">Vinculación de Oferta y Demanda</span>
+          <h2 class="text-2xl font-bold text-carbon">Pliegos Destacados y Alianzas PyME (UTEs)</h2>
+        </div>
+        <span class="tag-salvia px-2.5 py-1 text-xs font-semibold self-start sm:self-auto">
+          Eje Acuerdo Social · San Juan
+        </span>
+      </div>
+
+      <!-- Cuadro Explicativo Sobrio -->
+      <div class="border-matte bg-salvia/30 rounded-[3px] p-4 sm:p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div class="space-y-1 max-w-2xl">
+          <h3 class="font-bold text-base text-carbon">
+            Motor de Detección de Brechas y Consorcios Locales
+          </h3>
+          <p class="text-xs sm:text-sm text-carbon/90 leading-relaxed">
+            Cuando una PyME sanjuanina cumple el 75% de un pliego pero carece de una norma específica o capacidad de flota, <strong>LicitAR</strong> identifica otra PyME local complementaria para conformar una Unión Transitoria de Empresas (UTE) y alcanzar el 100% de los requisitos técnicos.
+          </p>
+        </div>
+        <button onclick="openAnalyzerModal('LIC-VEL-2026-01')" class="btn-carbon shrink-0 px-4 py-2.5 text-xs font-semibold w-full md:w-auto">
+          Abrir Simulador de UTE
+        </button>
+      </div>
+
+      <!-- Consorcios Sugeridos -->
+      <div class="space-y-3">
+        <h3 class="text-sm font-bold uppercase tracking-wider text-carbon">
+          Consorcios Productivos Sugeridos por IA Abierta
+        </h3>
+        <div id="featuredUtesGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- Poblar por JS -->
+        </div>
+      </div>
+
+      <!-- Licitaciones de Cierre Próximo -->
+      <div class="space-y-3 pt-2">
+        <h3 class="text-sm font-bold uppercase tracking-wider text-carbon">
+          Licitaciones Prioritarias de Próximo Vencimiento
+        </h3>
+        <div id="urgentTendersGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- Poblar por JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================
+         SECCIÓN 4: PERFILES (MINERAS Y PYMES)
+         ========================================== -->
+    <section id="view-perfiles" class="hidden space-y-6">
+      <div class="border-b border-carbon pb-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <span class="text-xs font-mono uppercase text-acero font-semibold">Padrón de Actores</span>
+          <h2 class="text-2xl font-bold text-carbon">Directorio de Perfiles: Mineras y PyMEs</h2>
+        </div>
+
+        <!-- Botones Conmutadores Planos -->
+        <div class="inline-flex border border-carbon rounded-[3px] overflow-hidden self-start">
+          <button id="btnToggleMineras" onclick="toggleDirectoryView('mineras')" class="px-4 py-2 text-xs font-semibold bg-acero text-blanco">
+            Operadoras Mineras (4)
+          </button>
+          <button id="btnTogglePymes" onclick="toggleDirectoryView('pymes')" class="px-4 py-2 text-xs font-semibold bg-blanco text-carbon hover:bg-salvia/40 border-l border-carbon">
+            PyMEs Proveedoras (6)
+          </button>
+        </div>
+      </div>
+
+      <!-- Listado de Operadoras Mineras -->
+      <div id="directoryMinerasContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Poblar por JS -->
+      </div>
+
+      <!-- Listado de PyMEs Locales -->
+      <div id="directoryPymesContainer" class="hidden grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <!-- Poblar por JS -->
+      </div>
+    </section>
+
+  </main>
+
+  <!-- =========================================================================
+       MODAL 1: ANALIZADOR AUTOMÁTICO DE PLIEGOS + GAP ANALYSIS + TRAZABILIDAD
+       ========================================================================= -->
+  <div id="analyzerModal" class="fixed inset-0 z-50 hidden bg-carbon/75 flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="bg-blanco border-2 border-carbon w-full max-w-4xl max-h-[92vh] rounded-t-[4px] sm:rounded-[4px] flex flex-col overflow-hidden">
+      
+      <!-- Cabecera del Modal -->
+      <div class="px-4 sm:px-6 py-3.5 bg-carbon text-blanco flex items-center justify-between gap-3">
+        <div>
+          <div class="flex items-center gap-2">
+            <span id="modalTenderCode" class="font-mono text-xs px-2 py-0.5 bg-salvia text-carbon font-bold rounded-[2px]">
+              LIC-001
+            </span>
+            <span class="text-[11px] font-mono text-salvia">Auditoría Documental RAG</span>
+          </div>
+          <h3 id="modalTenderTitle" class="font-bold text-sm sm:text-base text-blanco mt-1 line-clamp-1">
+            Título del Pliego
+          </h3>
+        </div>
+        <button onclick="closeAnalyzerModal()" class="px-2.5 py-1 bg-blanco text-carbon text-xs font-bold rounded-[2px] hover:bg-salvia">
+          Cerrar [X]
+        </button>
+      </div>
+
+      <!-- Cuerpo del Modal -->
+      <div class="p-4 sm:p-6 overflow-y-auto space-y-5">
+        
+        <!-- Ficha Técnica del Pliego -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 border-matte p-3 bg-blanco rounded-[3px] text-xs">
+          <div>
+            <span class="text-carbon/70 block">Operadora Minera</span>
+            <strong id="modalTenderCompany" class="text-carbon font-semibold">-</strong>
+          </div>
+          <div>
+            <span class="text-carbon/70 block">Presupuesto Oficial</span>
+            <strong id="modalTenderBudget" class="text-acero font-mono font-bold">-</strong>
+          </div>
+          <div>
+            <span class="text-carbon/70 block">Volumen Documental</span>
+            <strong id="modalTenderPages" class="text-carbon font-mono">-</strong>
+          </div>
+          <div>
+            <span class="text-carbon/70 block">Fecha de Cierre</span>
+            <strong id="modalTenderDeadline" class="text-carbon font-semibold">-</strong>
+          </div>
+        </div>
+
+        <!-- Simulador de Brechas (Gap Analysis) -->
+        <div class="border-matte rounded-[3px] p-4 space-y-4 bg-blanco">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-carbon/20 pb-3">
+            <div>
+              <span class="text-[11px] font-mono uppercase text-acero font-semibold">Evaluación de Capacidades</span>
+              <h4 class="font-bold text-base text-carbon">Matriz de Cumplimiento y Brechas por PyME</h4>
+            </div>
+            <div class="flex items-center gap-2">
+              <label for="modalPymeSelector" class="text-xs font-medium text-carbon">Simular con:</label>
+              <select id="modalPymeSelector" onchange="updateModalGapAnalysis()" class="border border-carbon bg-blanco text-xs font-semibold text-carbon px-2.5 py-1.5 rounded-[2px] focus:outline-none">
+                <!-- Poblar por JS -->
+              </select>
+            </div>
+          </div>
+
+          <!-- Barra de Progreso Plana -->
+          <div class="space-y-1.5">
+            <div class="flex items-center justify-between text-xs">
+              <span id="modalCompatibilityLabel" class="font-medium text-carbon">Requisitos cubiertos por la PyME</span>
+              <span id="modalCompatibilityPercent" class="font-mono font-bold text-base text-carbon px-2 py-0.5 bg-salvia border border-carbon rounded-[2px]">
+                75%
+              </span>
+            </div>
+            <div class="w-full h-3 bg-blanco border border-carbon rounded-[2px] overflow-hidden">
+              <div id="modalCompatibilityBar" class="h-full bg-acero transition-all duration-300" style="width: 75%"></div>
+            </div>
+          </div>
+
+          <!-- Lista de Requisitos Extraídos con Trazabilidad al PDF -->
+          <div class="space-y-2 pt-1">
+            <div class="flex items-center justify-between">
+              <h5 class="text-xs font-mono font-bold uppercase text-carbon">
+                Requisitos Extraídos + Cita Exacta del Pliego (Human-in-the-loop)
+              </h5>
+              <span class="text-[11px] text-acero font-medium">Toque una cláusula para leer el párrafo</span>
+            </div>
+            <div id="modalRequirementsList" class="space-y-2">
+              <!-- Poblar por JS -->
+            </div>
+          </div>
+
+          <!-- Cuadro de Cita Textual del PDF -->
+          <div id="pdfCitationBox" class="hidden border-l-4 border-acero bg-salvia/30 p-3.5 text-xs space-y-1 border-t border-r border-b border-carbon/30">
+            <div class="flex items-center justify-between">
+              <span id="pdfCitationHeader" class="font-mono font-bold text-carbon">Cita Textual del Documento Original</span>
+              <button onclick="document.getElementById('pdfCitationBox').classList.add('hidden')" class="text-carbon font-bold text-xs">
+                [Cerrar cita]
+              </button>
+            </div>
+            <p id="pdfCitationText" class="text-carbon italic leading-relaxed"></p>
+          </div>
+
+          <!-- Sugerencia de Consorcio / UTE -->
+          <div id="modalUteRecommendation" class="border-matte bg-salvia/45 p-3.5 rounded-[3px] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <!-- Poblar por JS -->
+          </div>
+        </div>
+
+        <!-- Cláusulas de Penalidad y Compre Local -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+          <div class="border-subtle p-3 rounded-[3px] bg-blanco space-y-1">
+            <strong class="text-carbon uppercase font-mono block">Cláusulas Punitivas Detectadas:</strong>
+            <p id="modalPenaltyText" class="text-carbon/85 leading-relaxed">-</p>
+          </div>
+          <div class="border-subtle p-3 rounded-[3px] bg-blanco space-y-1">
+            <strong class="text-acero uppercase font-mono block">Preferencia Compre Local (REPROMIN):</strong>
+            <p id="modalLocalPrefText" class="text-carbon/85 leading-relaxed">-</p>
+          </div>
+        </div>
+
+        <!-- Nota de Límite Ético y Epistemológico -->
+        <div class="border border-carbon bg-blanco p-3 rounded-[3px] text-xs text-carbon/90">
+          <strong>Límite del Desafío 3 (Hackeando la Minería 2026):</strong> Este reporte es una asistencia pre-licitatoria generada mediante modelos abiertos locales (Definición OSI 1.0). <strong>No reemplaza los procesos oficiales de homologación</strong> de las empresas operadoras mineras.
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       MODAL 2: DETALLE DE PERFIL (MINERA O PYME)
+       ========================================================================= -->
+  <div id="profileDetailModal" class="fixed inset-0 z-50 hidden bg-carbon/75 flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="bg-blanco border-2 border-carbon w-full max-w-2xl max-h-[90vh] rounded-t-[4px] sm:rounded-[4px] flex flex-col overflow-hidden">
+      <div class="px-4 sm:px-6 py-3.5 bg-acero text-blanco flex items-center justify-between gap-3">
+        <div>
+          <span id="profileModalTypeBadge" class="font-mono text-[11px] uppercase px-2 py-0.5 bg-blanco text-carbon font-bold rounded-[2px]">
+            FICHA DE PERFIL
+          </span>
+          <h3 id="profileModalTitle" class="font-bold text-base sm:text-lg text-blanco mt-1">Nombre de Entidad</h3>
+        </div>
+        <button onclick="closeProfileModal()" class="px-2.5 py-1 bg-blanco text-carbon text-xs font-bold rounded-[2px]">
+          Cerrar [X]
+        </button>
+      </div>
+      <div id="profileModalBody" class="p-4 sm:p-6 overflow-y-auto space-y-4 text-xs sm:text-sm">
+        <!-- Poblar por JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       MODAL 3: SIMULADOR DE CARGA DE PLIEGO PDF
+       ========================================================================= -->
+  <div id="uploadModal" class="fixed inset-0 z-50 hidden bg-carbon/75 flex items-center justify-center p-4">
+    <div class="bg-blanco border-2 border-carbon w-full max-w-md rounded-[4px] p-5 space-y-4">
+      <div class="flex items-center justify-between border-b border-carbon/20 pb-3">
+        <h3 class="font-bold text-base text-carbon">Cargar Pliego PDF (Demostración Local)</h3>
+        <button onclick="closeUploadModal()" class="text-xs font-bold text-carbon">[X]</button>
+      </div>
+
+      <p class="text-xs text-carbon/85 leading-relaxed">
+        Simule la lectura de un pliego licitatorio en nuestro servidor local en San Juan. Al usar modelos abiertos propios, los costos y documentos de la PyME no se envían a APIs extranjeras cerradas.
+      </p>
+
+      <div onclick="runSimulatedPdfUpload()" class="border-2 border-dashed border-acero bg-salvia/20 p-5 text-center cursor-pointer rounded-[3px] space-y-1.5">
+        <i class="fa-regular fa-file-pdf text-2xl text-acero"></i>
+        <p class="text-xs font-bold text-carbon">Seleccionar documento de prueba: Pliego_Josemaria_Obras_2026.pdf</p>
+        <p class="text-[11px] text-carbon/70">510 páginas · Formato PDF Estándar Abierto</p>
+      </div>
+
+      <div id="uploadProgressBox" class="hidden space-y-1.5">
+        <div class="flex justify-between text-xs font-mono text-carbon">
+          <span id="uploadStepLabel">Procesando OCR y secciones...</span>
+          <span id="uploadPercentLabel">40%</span>
+        </div>
+        <div class="w-full h-2.5 border border-carbon bg-blanco">
+          <div id="uploadBarFill" class="h-full bg-acero transition-all duration-300" style="width: 40%"></div>
+        </div>
+      </div>
+
+      <div class="flex justify-end gap-2 pt-2">
+        <button onclick="closeUploadModal()" class="btn-outline px-3 py-2 text-xs font-semibold">Cancelar</button>
+        <button onclick="runSimulatedPdfUpload()" class="btn-acero px-4 py-2 text-xs font-semibold">Analizar Documento</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- BARRA DE NAVEGACIÓN INFERIOR PARA CELULARES (100% RESPONSIVE Y MATE) -->
+  <nav class="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-blanco border-t-2 border-carbon flex items-center justify-around py-1.5 px-1">
+    <button onclick="switchTab('home')" id="nav-mob-home" class="flex flex-col items-center py-1 px-3 rounded-[2px] bg-acero text-blanco text-[11px] font-semibold">
+      <i class="fa-solid fa-house text-sm mb-0.5"></i>
+      <span>Home</span>
+    </button>
+    <button onclick="switchTab('categorias')" id="nav-mob-categorias" class="flex flex-col items-center py-1 px-3 rounded-[2px] text-carbon text-[11px] font-medium">
+      <i class="fa-solid fa-table-list text-sm mb-0.5"></i>
+      <span>Categorías</span>
+    </button>
+    <button onclick="switchTab('destacados')" id="nav-mob-destacados" class="flex flex-col items-center py-1 px-3 rounded-[2px] text-carbon text-[11px] font-medium">
+      <i class="fa-solid fa-star text-sm mb-0.5"></i>
+      <span>Destacados</span>
+    </button>
+    <button onclick="switchTab('perfiles')" id="nav-mob-perfiles" class="flex flex-col items-center py-1 px-3 rounded-[2px] text-carbon text-[11px] font-medium">
+      <i class="fa-solid fa-building text-sm mb-0.5"></i>
+      <span>Perfiles</span>
+    </button>
+  </nav>
+
+  <!-- =========================================================================
+       LÓGICA JAVASCRIPT Y DATOS VERIFICADOS DE SAN JUAN
+       ========================================================================= -->
+  <script>
+    // 1. Categorías Mineras/Industriales
+    const categoriesData = [
+      { id: 'Metalmecánica', icon: 'fa-gears', desc: 'Estructuras metálicas, soldadura certificada AWS, calderería y montaje industrial.' },
+      { id: 'Logística y Transporte', icon: 'fa-truck', desc: 'Transporte terrestre de cargas especiales, flota 6x4 e insumos en alta montaña.' },
+      { id: 'Obras Civiles', icon: 'fa-trowel-bricks', desc: 'Movimiento de suelos pesado, conducción hídrica, defensas y caminos mineros.' },
+      { id: 'Servicios Geológicos', icon: 'fa-compass', desc: 'Perforación diamantina, logueo geológico, muestreo y ensayos de laboratorio.' },
+      { id: 'Insumos y Seguridad', icon: 'fa-helmet-safety', desc: 'Alimentación de campamentos, hotelería modular, sanidad, EPP y telemetría.' }
+    ];
+
+    // 2. Perfiles de PyMEs Locales de San Juan
+    const pymesData = [
+      {
+        id: 'PYME-01',
+        name: 'Metalúrgica Cuyana SRL',
+        location: 'Rawson, San Juan',
+        category: 'Metalmecánica',
+        repromin: 'Inscripto · Legajo #SJ-1042',
+        employees: 48,
+        antiguedad: '14 años en el sector',
+        capabilities: ['REPROMIN Activo', 'ISO 9001', 'Soldadura AWS', 'Planta Industrial 500tn'],
+        equipment: 'Nave industrial de 3.200 m2, puente grúa de 25tn, corte CNC por plasma y flota liviana 4x4.',
+        history: 'Fabricación de estructuras para plantas de trituración en departamento Iglesia.'
+      },
+      {
+        id: 'PYME-02',
+        name: 'EcoSoldaduras del Valle SA',
+        location: 'Chimbas, San Juan',
+        category: 'Metalmecánica',
+        repromin: 'Inscripto · Legajo #SJ-1198',
+        employees: 32,
+        antiguedad: '9 años en el sector',
+        capabilities: ['REPROMIN Activo', 'ISO 14001', 'ISO 45001', 'Ensayos No Destructivos'],
+        equipment: 'Equipos de ultrasonido, gestión ambiental certificada en taller y tornería pesada.',
+        history: 'Mantenimiento mecánico y ensayos de integridad estructural en proyectos metalíferos.'
+      },
+      {
+        id: 'PYME-03',
+        name: 'Logística Andina SJ',
+        location: 'Albardón, San Juan',
+        category: 'Logística y Transporte',
+        repromin: 'Inscripto · Legajo #SJ-0874',
+        employees: 65,
+        antiguedad: '18 años en el sector',
+        capabilities: ['REPROMIN Activo', 'ISO 9001', 'ISO 39001 Seguridad Vial', 'Flota Pesada Alta Montaña'],
+        equipment: '18 unidades tractoras 6x4 configuradas para más de 4.000 msnm, bateas y monitoreo satelital.',
+        history: 'Abastecimiento invernal ininterrumpido en corredores cordilleranos de Calingasta e Iglesia.'
+      },
+      {
+        id: 'PYME-04',
+        name: 'Constructora Río San Juan SA',
+        location: 'Pocito, San Juan',
+        category: 'Obras Civiles',
+        repromin: 'Inscripto · Legajo #SJ-0612',
+        employees: 95,
+        antiguedad: '21 años en el sector',
+        capabilities: ['REPROMIN Activo', 'ISO 9001', 'ISO 14001', 'Movimiento de Suelos Pesado'],
+        equipment: 'Excavadoras hidráulicas sobre orugas, motoniveladoras y planta dosificadora de hormigón móvil.',
+        history: 'Ejecución de defensas aluvionales, apertura de caminos y obras civiles en campamentos.'
+      },
+      {
+        id: 'PYME-05',
+        name: 'GeoExplora San Juan SRL',
+        location: 'Capital, San Juan',
+        category: 'Servicios Geológicos',
+        repromin: 'Inscripto · Legajo #SJ-1310',
+        employees: 38,
+        antiguedad: '11 años en el sector',
+        capabilities: ['REPROMIN Activo', 'ISO 9001', 'ISO 45001', 'Perforación Diamantina'],
+        equipment: '4 equipos de perforación diamantina de alta montaña y laboratorio móvil de corte de testigos.',
+        history: 'Campañas de exploración avanzada con profesionales geólogos egresados de la UNSJ.'
+      },
+      {
+        id: 'PYME-06',
+        name: 'Servicios Cordillera Integral',
+        location: 'Rodeo / Iglesia, San Juan',
+        category: 'Insumos y Seguridad',
+        repromin: 'Inscripto · Legajo #SJ-0933',
+        employees: 74,
+        antiguedad: '12 años en el sector',
+        capabilities: ['REPROMIN Activo', 'BPM / HACCP Inocuidad', 'ISO 45001', 'Base Operativa en Iglesia'],
+        equipment: 'Cámaras frigoríficas modulares, unidades térmicas 4x4, telemetría y provisión de EPP.',
+        history: 'Gestión integral de comedores de alta montaña con compra a productores agrícolas de Jáchal e Iglesia.'
+      }
+    ];
+
+    // 3. Perfiles de Operadoras Mineras en San Juan
+    const minerasData = [
+      {
+        id: 'MIN-VEL',
+        name: 'Proyecto Veladero (Barrick / Shandong)',
+        department: 'Departamento Iglesia, San Juan (4.000 - 4.850 msnm)',
+        mineral: 'Oro y Plata · Operación Activa',
+        compreLocal: '74% de adjudicación a proveedores locales registrados',
+        standards: ['Inscripción obligatoria en REPROMIN', 'Certificación ISO 14001 / ISO 45001', 'Protocolos de Seguridad Vial en Alta Montaña'],
+        contactArea: 'Gerencia de Abastecimiento y Desarrollo de Cadena de Valor Local',
+        openTendersCount: 2
+      },
+      {
+        id: 'MIN-AZU',
+        name: 'Proyecto Los Azules (McEwen Copper)',
+        department: 'Departamento Calingasta, San Juan (3.600 msnm)',
+        mineral: 'Cobre Sustentable · Factibilidad y Desarrollo',
+        compreLocal: '68% de prioridad departamental (Calingasta) y provincial',
+        standards: ['Constancia REPROMIN vigente', 'Trazabilidad ambiental y eficiencia energética', 'Normas ISO 9001 e ISO 39001'],
+        contactArea: 'Oficina de Contrataciones y Vinculación Comunitaria',
+        openTendersCount: 2
+      },
+      {
+        id: 'MIN-JOS',
+        name: 'Proyecto Josemaría (Vicuña / Lundin - BHP)',
+        department: 'Departamento Iglesia, San Juan (4.295 msnm)',
+        mineral: 'Cobre, Oro y Plata · Pre-construcción e Infraestructura',
+        compreLocal: '71% de articulación con cámaras empresariales de San Juan',
+        standards: ['REPROMIN y Registro Federal (RFPM)', 'Estándares de Ingeniería Civil e Hídrica', 'Planes de Contingencia Invernal'],
+        contactArea: 'Departamento de Contratos e Infraestructura Temprana',
+        openTendersCount: 1
+      },
+      {
+        id: 'MIN-GUA',
+        name: 'Proyecto Gualcamayo (Minas Argentinas)',
+        department: 'Departamento Jáchal, San Juan (1.900 msnm)',
+        mineral: 'Oro y Carbonatos Profundos · Operación y Desarrollo',
+        compreLocal: '79% de contratación en Jáchal y Gran San Juan',
+        standards: ['REPROMIN Activo', 'Certificación de Inocuidad Alimentaria HACCP', 'Sistema de Gestión ISO 45001'],
+        contactArea: 'Administración de Contratos y Proveedores Locales',
+        openTendersCount: 1
+      }
+    ];
+
+    // 4. Licitaciones Activas con Trazabilidad Documental
+    const tendersData = [
+      {
+        id: 'LIC-VEL-2026-01',
+        code: 'LIC-VEL-2026-01',
+        title: 'Fabricación y Montaje de Estructuras Metálicas para Nave de Molienda',
+        mineraId: 'MIN-VEL',
+        minera: 'Proyecto Veladero',
+        category: 'Metalmecánica',
+        budget: 'USD 680.000',
+        pages: '412 páginas PDF',
+        deadline: '15 Nov 2026 (Prioritario)',
+        urgent: true,
+        penalties: 'Multa del 0,5% diario por demora en entregas parciales de vigas reticuladas (tope 10% del valor contractual).',
+        localPref: 'Bonificación de +8 puntos en matriz de evaluación para firmas con planta industrial radicada en San Juan (REPROMIN).',
+        requirements: [
+          {
+            name: 'Inscripción vigente en REPROMIN (Lic. Pública 03-2026)',
+            tag: 'REPROMIN Activo',
+            clause: 'Pág. 18, Cláusula 4.1',
+            excerpt: '«Todo oferente o integrante de UTE deberá acreditar certificado vigente en el Registro Provincial de Proveedores Mineros de San Juan (REPROMIN) con antigüedad mínima de 12 meses de radicación operativa.»'
+          },
+          {
+            name: 'Sistema de Gestión de Calidad certificado ISO 9001',
+            tag: 'ISO 9001',
+            clause: 'Pág. 94, Cláusula 11.2',
+            excerpt: '«Los procesos de trazabilidad de aceros estructurales y recepción de materias primas deberán contar con certificación ISO 9001:2015 emitida por ente acreditado.»'
+          },
+          {
+            name: 'Homologación de Soldadores bajo código AWS D1.1',
+            tag: 'Soldadura AWS',
+            clause: 'Pág. 163, Cláusula 19.4',
+            excerpt: '«La totalidad de las uniones soldadas en perfiles pesados deberá ser ejecutada por operarios calificados según norma AWS D1.1 para cargas dinámicas a bajas temperaturas.»'
+          },
+          {
+            name: 'Certificación Ambiental ISO 14001 en taller y obra',
+            tag: 'ISO 14001',
+            clause: 'Pág. 285, Anexo Ambiental C.3',
+            excerpt: '«Es requisito excluyente para el ingreso a faena que el contratista o su consorcio asociado posea certificación ambiental ISO 14001 vigente para tratamiento de efluentes y pinturas.»'
+          }
+        ],
+        recommendedUte: {
+          pymeA: 'Metalúrgica Cuyana SRL',
+          pymeB: 'EcoSoldaduras del Valle SA',
+          reason: 'Metalúrgica Cuyana cubre capacidad de planta (500tn), ISO 9001 y soldadura AWS (75%), mientras EcoSoldaduras del Valle aporta la certificación ISO 14001 para alcanzar el 100%.'
+        }
+      },
+      {
+        id: 'LIC-AZU-2026-04',
+        code: 'LIC-AZU-2026-04',
+        title: 'Transporte Terrestre de Cargas Especiales y Abastecimiento Invernal',
+        mineraId: 'MIN-AZU',
+        minera: 'Proyecto Los Azules',
+        category: 'Logística y Transporte',
+        budget: 'USD 920.000',
+        pages: '328 páginas PDF',
+        deadline: '22 Nov 2026 (Prioritario)',
+        urgent: true,
+        penalties: 'Retención del 5% de garantía de cumplimiento ante interrupción de reporte satelital en ruta de alta montaña.',
+        localPref: 'Prioridad nivel 1 para empresas transportistas con base operativa en Calingasta o Gran San Juan.',
+        requirements: [
+          {
+            name: 'Certificado de Proveedor Local REPROMIN',
+            tag: 'REPROMIN Activo',
+            clause: 'Pág. 12, Cláusula 2.4',
+            excerpt: '«Las empresas transportistas deberán presentar constancia de inscripción activa en el padrón REPROMIN del Ministerio de Minería de San Juan.»'
+          },
+          {
+            name: 'Certificación ISO 39001 de Seguridad Vial en Alta Montaña',
+            tag: 'ISO 39001 Seguridad Vial',
+            clause: 'Pág. 77, Cláusula 9.1',
+            excerpt: '«Dado el tránsito por corredores cordilleranos de pendiente severa, se exige certificación ISO 39001 y programa de control de fatiga de conductores.»'
+          },
+          {
+            name: 'Flota mínima de 15 tractores 6x4 para 4.000 msnm',
+            tag: 'Flota Pesada Alta Montaña',
+            clause: 'Pág. 142, Pliego Técnico 6.3',
+            excerpt: '«El adjudicatario deberá disponer de un mínimo de 15 unidades tractoras doble tracción con freno auxiliar de motor y equipamiento invernal.»'
+          },
+          {
+            name: 'Gestión de Calidad Operativa ISO 9001',
+            tag: 'ISO 9001',
+            clause: 'Pág. 201, Cláusula 14.2',
+            excerpt: '«El despacho de cargas críticas deberá encontrarse auditado bajo norma ISO 9001.»'
+          }
+        ],
+        recommendedUte: {
+          pymeA: 'Logística Andina SJ',
+          pymeB: 'Servicios Cordillera Integral',
+          reason: 'Logística Andina SJ cubre flota pesada e ISO 39001, complementándose con la base operativa en alta montaña de Servicios Cordillera.'
+        }
+      },
+      {
+        id: 'LIC-JOS-2026-09',
+        code: 'LIC-JOS-2026-09',
+        title: 'Obras Civiles de Conducción Hídrica y Defensa Aluvional en Campamento',
+        mineraId: 'MIN-JOS',
+        minera: 'Proyecto Josemaría',
+        category: 'Obras Civiles',
+        budget: 'USD 1.450.000',
+        pages: '510 páginas PDF',
+        deadline: '30 Nov 2026',
+        urgent: false,
+        penalties: 'Cláusula de rescisión automática ante incumplimiento de protocolos ambientales en vegas altoandinas.',
+        localPref: 'Exige un mínimo del 80% de mano de obra radicada en la Provincia de San Juan.',
+        requirements: [
+          {
+            name: 'Inscripción activa en REPROMIN San Juan',
+            tag: 'REPROMIN Activo',
+            clause: 'Pág. 24, Cláusula 3.1',
+            excerpt: '«Condición habilitante: Acreditar inscripción en REPROMIN y libre deuda fiscal en la provincia de San Juan.»'
+          },
+          {
+            name: 'Capacidad de Movimiento de Suelos Pesado (>50.000 m3/mes)',
+            tag: 'Movimiento de Suelos Pesado',
+            clause: 'Pág. 188, Especificación Civil 8.2',
+            excerpt: '«El oferente deberá demostrar parque de maquinaria propio o consorciado apto para movimiento de suelos a más de 4.000 msnm.»'
+          },
+          {
+            name: 'Norma de Gestión Ambiental ISO 14001',
+            tag: 'ISO 14001',
+            clause: 'Pág. 310, Anexo Medio Ambiente 12.1',
+            excerpt: '«Toda intervención cercana a cursos hídricos requiere certificación ISO 14001 y monitoreo continuo de turbidez.»'
+          },
+          {
+            name: 'Calidad en Procesos Constructivos ISO 9001',
+            tag: 'ISO 9001',
+            clause: 'Pág. 355, Cláusula 16.5',
+            excerpt: '«Ensayos de compactación y hormigones sujetos a protocolo de calidad ISO 9001.»'
+          }
+        ],
+        recommendedUte: {
+          pymeA: 'Constructora Río San Juan SA',
+          pymeB: 'Metalúrgica Cuyana SRL',
+          reason: 'Constructora Río San Juan cubre toda la obra civil e ISO 14001, aliándose con Metalúrgica Cuyana para compuertas hidromecánicas.'
+        }
+      },
+      {
+        id: 'LIC-GUA-2026-03',
+        code: 'LIC-GUA-2026-03',
+        title: 'Servicio Integral de Alimentación, Hotelería y Seguridad de Campamento',
+        mineraId: 'MIN-GUA',
+        minera: 'Proyecto Gualcamayo',
+        category: 'Insumos y Seguridad',
+        budget: 'USD 790.000',
+        pages: '276 páginas PDF',
+        deadline: '18 Nov 2026 (Prioritario)',
+        urgent: true,
+        penalties: 'Sanción contractual ante desvíos en cadena de frío o incumplimiento de cuota de compra a productores locales.',
+        localPref: 'Compre comunitario obligatorio: mínimo 60% de insumos frescos adquiridos en Jáchal e Iglesia.',
+        requirements: [
+          {
+            name: 'Inscripción vigente en REPROMIN San Juan',
+            tag: 'REPROMIN Activo',
+            clause: 'Pág. 19, Cláusula 3.2',
+            excerpt: '«Habilitación comercial en la provincia y registro activo en REPROMIN.»'
+          },
+          {
+            name: 'Certificación de Inocuidad Alimentaria BPM / HACCP',
+            tag: 'BPM / HACCP Inocuidad',
+            clause: 'Pág. 88, Pliego Bromatológico 7.1',
+            excerpt: '«Todas las cocinas y comedores en faena deberán operar bajo certificación HACCP vigente.»'
+          },
+          {
+            name: 'Seguridad y Salud Ocupacional ISO 45001',
+            tag: 'ISO 45001',
+            clause: 'Pág. 134, Cláusula 10.3',
+            excerpt: '«El personal de hotelería y mantenimiento de campamento deberá estar cubierto bajo sistema ISO 45001.»'
+          },
+          {
+            name: 'Base logística operativa en zona Norte (Iglesia / Jáchal)',
+            tag: 'Base Operativa en Iglesia',
+            clause: 'Pág. 210, Anexo Logístico 15.2',
+            excerpt: '«Para garantizar respuesta ante emergencias climáticas, se requiere base de acopio en los departamentos del norte sanjuanino.»'
+          }
+        ],
+        recommendedUte: {
+          pymeA: 'Servicios Cordillera Integral',
+          pymeB: 'Logística Andina SJ',
+          reason: 'Servicios Cordillera aporta certificaciones HACCP e ISO 45001 en zona norte, respaldada por Logística Andina para transporte refrigerado.'
+        }
+      },
+      {
+        id: 'LIC-AZU-2026-11',
+        code: 'LIC-AZU-2026-11',
+        title: 'Campaña de Perforación Diamantina y Logueo Geológico Asistido',
+        mineraId: 'MIN-AZU',
+        minera: 'Proyecto Los Azules',
+        category: 'Servicios Geológicos',
+        budget: 'USD 1.120.000',
+        pages: '360 páginas PDF',
+        deadline: '10 Dic 2026',
+        urgent: false,
+        penalties: 'Descuento proporcional por recuperación de testigo de roca inferior al 95% en tramos mineralizados.',
+        localPref: 'Bonificación adicional por contratación de geólogos y técnicos egresados de la FCEFN - UNSJ.',
+        requirements: [
+          {
+            name: 'Registro Provincial de Proveedores Mineros (REPROMIN)',
+            tag: 'REPROMIN Activo',
+            clause: 'Pág. 15, Cláusula 2.1',
+            excerpt: '«Inscripción obligatoria en el padrón REPROMIN de la Provincia de San Juan.»'
+          },
+          {
+            name: 'Capacidad de Perforación Diamantina en Alta Montaña',
+            tag: 'Perforación Diamantina',
+            clause: 'Pág. 64, Pliego Geológico 5.2',
+            excerpt: '«Disponibilidad mínima de 3 máquinas de sondaje diamantino con capacidad HQ/NQ hasta 800 metros.»'
+          },
+          {
+            name: 'Seguridad y Salud en Operaciones de Perforación ISO 45001',
+            tag: 'ISO 45001',
+            clause: 'Pág. 102, Cláusula 8.4',
+            excerpt: '«Las plataformas de perforación diamantina deberán contar con certificación ISO 45001.»'
+          },
+          {
+            name: 'Certificación de Calidad de Muestreo ISO 9001',
+            tag: 'ISO 9001',
+            clause: 'Pág. 240, Cláusula 14.3',
+            excerpt: '«Cadena de custodia de testigos geológicos auditada bajo norma ISO 9001.»'
+          }
+        ],
+        recommendedUte: {
+          pymeA: 'GeoExplora San Juan SRL',
+          pymeB: 'Constructora Río San Juan SA',
+          reason: 'GeoExplora cubre el 100% de perforación diamantina e ISO 45001/9001, aliándose con Constructora Río San Juan para apertura de plataformas.'
+        }
+      },
+      {
+        id: 'LIC-VEL-2026-07',
+        code: 'LIC-VEL-2026-07',
+        title: 'Provisión de Equipos de Protección, Telemetría y Monitoreo en Faena',
+        mineraId: 'MIN-VEL',
+        minera: 'Proyecto Veladero',
+        category: 'Insumos y Seguridad',
+        budget: 'USD 340.000',
+        pages: '215 páginas PDF',
+        deadline: '05 Dic 2026',
+        urgent: false,
+        penalties: 'Penalidad del 1% diario por demora en reposición de equipamiento crítico de seguridad.',
+        localPref: 'Prioridad para firmas locales encuadradas en Ley 27.506 y proveedores con stock en San Juan.',
+        requirements: [
+          {
+            name: 'Registro REPROMIN activo en la Provincia de San Juan',
+            tag: 'REPROMIN Activo',
+            clause: 'Pág. 14, Cláusula 2.2',
+            excerpt: '«Las empresas proveedoras deberán encontrarse inscriptas en REPROMIN San Juan.»'
+          },
+          {
+            name: 'Norma de Seguridad y Salud Ocupacional ISO 45001',
+            tag: 'ISO 45001',
+            clause: 'Pág. 52, Cláusula 6.1',
+            excerpt: '«Protocolos de asistencia en campo auditados bajo estándar ISO 45001.»'
+          },
+          {
+            name: 'Base Operativa en Departamento Iglesia',
+            tag: 'Base Operativa en Iglesia',
+            clause: 'Pág. 118, Anexo 9.3',
+            excerpt: '«Se requiere depósito técnico permanente en el departamento Iglesia para soporte inmediato.»'
+          },
+          {
+            name: 'Sistema de Gestión de Calidad ISO 9001',
+            tag: 'ISO 9001',
+            clause: 'Pág. 170, Cláusula 12.1',
+            excerpt: '«Trazabilidad de lotes e instrumental bajo norma ISO 9001.»'
+          }
+        ],
+        recommendedUte: {
+          pymeA: 'Servicios Cordillera Integral',
+          pymeB: 'Metalúrgica Cuyana SRL',
+          reason: 'Servicios Cordillera aporta base en Iglesia e ISO 45001 (75%), sumando la certificación ISO 9001 de Metalúrgica Cuyana para llegar al 100%.'
+        }
+      }
+    ];
+
+    // Estado de la Aplicación
+    let currentTab = 'home';
+    let selectedCategory = 'TODAS';
+    let activePymeId = 'PYME-01';
+    let currentModalTenderId = 'LIC-VEL-2026-01';
+
+    // Inicialización de Tema (Modo Claro / Modo Oscuro Mate)
+    function initTheme() {
+      const savedTheme = localStorage.getItem('licitar_theme');
+      if (savedTheme === 'dark') {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+      updateThemeToggleUI();
+    }
+
+    function toggleDarkMode() {
+      const htmlEl = document.documentElement;
+      const isDark = htmlEl.classList.toggle('dark');
+      localStorage.setItem('licitar_theme', isDark ? 'dark' : 'light');
+      updateThemeToggleUI();
+    }
+
+    function updateThemeToggleUI() {
+      const isDark = document.documentElement.classList.contains('dark');
+      const iconEl = document.getElementById('themeToggleIcon');
+      const textEl = document.getElementById('themeToggleText');
+      if (iconEl) {
+        iconEl.className = isDark ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+      }
+      if (textEl) {
+        textEl.textContent = isDark ? 'Claro' : 'Oscuro';
+      }
+    }
+
+    // Inicialización General
+    window.addEventListener('DOMContentLoaded', () => {
+      initTheme();
+      populatePymeSelectors();
+      renderHomeCategoryPills();
+      renderHomeTenders();
+      renderCategoriesView();
+      renderDestacadosView();
+      renderPerfilesView();
+    });
+
+    // Poblar Selectores de PyME
+    function populatePymeSelectors() {
+      const selects = [
+        document.getElementById('globalPymeSelect'),
+        document.getElementById('mobilePymeSelect'),
+        document.getElementById('modalPymeSelector')
+      ];
+      selects.forEach(sel => {
+        if (!sel) return;
+        sel.innerHTML = pymesData.map(p => 
+          `<option value="${p.id}" ${p.id === activePymeId ? 'selected' : ''}>${p.name}</option>`
+        ).join('');
+      });
+    }
+
+    function handleGlobalPymeChange(newPymeId) {
+      activePymeId = newPymeId;
+      populatePymeSelectors();
+      renderHomeTenders();
+      renderCategoriesView();
+      if (!document.getElementById('analyzerModal').classList.contains('hidden')) {
+        updateModalGapAnalysis();
+      }
+    }
+
+    // Cálculo de Compatibilidad (Gap Analysis)
+    function calculateMatch(pyme, tender) {
+      let metCount = 0;
+      const details = tender.requirements.map(req => {
+        const isMet = pyme.capabilities.includes(req.tag);
+        if (isMet) metCount++;
+        return { ...req, isMet };
+      });
+      const percentage = Math.round((metCount / tender.requirements.length) * 100);
+      return { percentage, metCount, total: tender.requirements.length, details };
+    }
+
+    // Navegación entre Pestañas
+    function switchTab(tabName) {
+      currentTab = tabName;
+      const tabs = ['home', 'categorias', 'destacados', 'perfiles'];
+      
+      tabs.forEach(t => {
+        const viewEl = document.getElementById(`view-${t}`);
+        const deskBtn = document.getElementById(`nav-desk-${t}`);
+        const mobBtn = document.getElementById(`nav-mob-${t}`);
+
+        if (t === tabName) {
+          viewEl.classList.remove('hidden');
+          if (deskBtn) {
+            deskBtn.className = 'px-4 py-2 text-sm font-semibold rounded-[3px] bg-acero text-blanco';
+          }
+          if (mobBtn) {
+            mobBtn.className = 'flex flex-col items-center py-1 px-3 rounded-[2px] bg-acero text-blanco text-[11px] font-semibold';
+          }
+        } else {
+          viewEl.classList.add('hidden');
+          if (deskBtn) {
+            deskBtn.className = 'px-4 py-2 text-sm font-medium rounded-[3px] text-carbon hover:bg-salvia/50';
+          }
+          if (mobBtn) {
+            mobBtn.className = 'flex flex-col items-center py-1 px-3 rounded-[2px] text-carbon text-[11px] font-medium';
+          }
+        }
+      });
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Píldoras de Categoría en Home
+    function renderHomeCategoryPills() {
+      const container = document.getElementById('homeCategoryPills');
+      const allCats = ['TODAS', ...categoriesData.map(c => c.id)];
+      container.innerHTML = allCats.map(cat => {
+        const isActive = selectedCategory === cat;
+        return `
+          <button onclick="setHomeCategory('${cat}')" class="shrink-0 px-3 py-1.5 text-xs font-semibold rounded-[3px] border ${
+            isActive 
+              ? 'bg-carbon text-blanco border-carbon' 
+              : 'bg-blanco text-carbon border-carbon/40 hover:bg-salvia/40'
+          }">
+            ${cat === 'TODAS' ? 'Todos los Rubros (6)' : cat}
+          </button>
+        `;
+      }).join('');
+    }
+
+    function setHomeCategory(cat) {
+      selectedCategory = cat;
+      renderHomeCategoryPills();
+      renderHomeTenders();
+    }
+
+    function clearSearch() {
+      document.getElementById('searchInput').value = '';
+      renderHomeTenders();
+    }
+
+    // Tarjeta HTML Minimalista y Mate para cada Licitación
+    function createTenderCardHTML(tender) {
+      const activePyme = pymesData.find(p => p.id === activePymeId) || pymesData[0];
+      const matchInfo = calculateMatch(activePyme, tender);
+
+      return `
+        <article class="border-matte rounded-[3px] p-4 sm:p-5 bg-blanco flex flex-col justify-between gap-4">
+          <div class="space-y-3">
+            <div class="flex items-center justify-between gap-2 border-b border-carbon/15 pb-2.5">
+              <span class="font-mono text-xs font-bold px-2 py-0.5 bg-carbon text-blanco rounded-[2px]">
+                ${tender.code}
+              </span>
+              <span class="text-xs font-mono text-carbon/80">
+                ${tender.pages} · Cierre: <strong>${tender.deadline}</strong>
+              </span>
+            </div>
+
+            <div>
+              <p class="text-xs font-mono font-semibold text-acero uppercase">${tender.minera} · ${tender.category}</p>
+              <h3 class="font-bold text-base sm:text-lg text-carbon mt-1 leading-snug">${tender.title}</h3>
+            </div>
+
+            <div class="flex flex-wrap gap-1.5">
+              ${tender.requirements.map(r => `
+                <span class="tag-neutral text-[11px] font-mono px-2 py-0.5">
+                  ${r.tag}
+                </span>
+              `).join('')}
+            </div>
+          </div>
+
+          <div class="space-y-3 pt-3 border-t border-carbon/20">
+            <div class="bg-salvia/35 border border-carbon/30 rounded-[2px] p-2.5 flex items-center justify-between gap-2">
+              <div class="text-xs">
+                <span class="text-carbon/80 block">Compatibilidad para <strong>${activePyme.name}</strong>:</span>
+                <span class="font-mono text-[11px] text-carbon">${matchInfo.metCount} de ${matchInfo.total} requisitos cumplidos</span>
+              </div>
+              <span class="tag-salvia font-mono font-bold text-sm px-2.5 py-1">
+                ${matchInfo.percentage}% Match
+              </span>
+            </div>
+
+            <div class="flex items-center justify-between gap-2 pt-1">
+              <div>
+                <span class="text-[11px] text-carbon/70 block">Presupuesto Oficial</span>
+                <span class="font-mono font-bold text-sm text-carbon">${tender.budget}</span>
+              </div>
+              <button onclick="openAnalyzerModal('${tender.id}')" class="btn-acero px-3.5 py-2 text-xs font-semibold">
+                Analizar Pliego (IA)
+              </button>
+            </div>
+          </div>
+        </article>
+      `;
+    }
+
+    // Renderizar Licitaciones en Home
+    function renderHomeTenders() {
+      const query = (document.getElementById('searchInput')?.value || '').toLowerCase().trim();
+      const clearBtn = document.getElementById('clearSearchBtn');
+      if (clearBtn) {
+        clearBtn.classList.toggle('hidden', query.length === 0);
+      }
+
+      const filtered = tendersData.filter(t => {
+        const matchesCat = selectedCategory === 'TODAS' || t.category === selectedCategory;
+        const matchesQuery = !query ||
+          t.title.toLowerCase().includes(query) ||
+          t.code.toLowerCase().includes(query) ||
+          t.minera.toLowerCase().includes(query) ||
+          t.category.toLowerCase().includes(query) ||
+          t.requirements.some(r => r.tag.toLowerCase().includes(query));
+        return matchesCat && matchesQuery;
+      });
+
+      document.getElementById('tenderCountLabel').textContent = `${filtered.length} licitación(es) encontrada(s)`;
+      const grid = document.getElementById('homeTendersGrid');
+
+      if (filtered.length === 0) {
+        grid.innerHTML = `
+          <div class="col-span-full border-matte rounded-[3px] p-8 text-center bg-blanco space-y-2">
+            <p class="font-bold text-base text-carbon">Sin resultados para la búsqueda actual</p>
+            <p class="text-xs text-carbon/70">Pruebe con otro término o restablezca los filtros de categoría.</p>
+          </div>
+        `;
+        return;
+      }
+
+      grid.innerHTML = filtered.map(t => createTenderCardHTML(t)).join('');
+    }
+
+    // Renderizar Vista de Categorías
+    function renderCategoriesView() {
+      const grid = document.getElementById('categoriesGrid');
+      grid.innerHTML = categoriesData.map(cat => {
+        const tCount = tendersData.filter(t => t.category === cat.id).length;
+        const pCount = pymesData.filter(p => p.category === cat.id).length;
+        return `
+          <div onclick="selectCategoryFilter('${cat.id}')" class="border-matte rounded-[3px] p-4 bg-blanco hover:bg-salvia/30 cursor-pointer transition space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="w-8 h-8 bg-acero text-blanco flex items-center justify-center rounded-[2px] text-sm">
+                <i class="fa-solid ${cat.icon}"></i>
+              </span>
+              <span class="font-mono text-xs font-semibold px-2 py-0.5 border border-carbon/40 rounded-[2px]">
+                ${tCount} Pliego(s) · ${pCount} PyME(s)
+              </span>
+            </div>
+            <h3 class="font-bold text-base text-carbon pt-1">${cat.id}</h3>
+            <p class="text-xs text-carbon/80 leading-relaxed">${cat.desc}</p>
+          </div>
+        `;
+      }).join('');
+
+      selectCategoryFilter('TODAS');
+    }
+
+    function selectCategoryFilter(catId) {
+      document.getElementById('selectedCategoryBadge').textContent = catId === 'TODAS' ? 'Todas las Categorías' : catId;
+      
+      const fTenders = catId === 'TODAS' ? tendersData : tendersData.filter(t => t.category === catId);
+      const fPymes = catId === 'TODAS' ? pymesData : pymesData.filter(p => p.category === catId);
+
+      document.getElementById('categoryTendersList').innerHTML = fTenders.map(t => createTenderCardHTML(t)).join('');
+      
+      document.getElementById('categoryPymesList').innerHTML = fPymes.map(p => `
+        <div class="border-subtle rounded-[3px] p-3.5 bg-blanco flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div class="space-y-1">
+            <div class="flex items-center gap-2">
+              <strong class="text-sm text-carbon">${p.name}</strong>
+              <span class="tag-salvia text-[10px] font-mono px-1.5 py-0.5 font-semibold">REPROMIN</span>
+            </div>
+            <p class="text-xs text-carbon/75">${p.location} · ${p.employees} empleados</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="openProfileModal('pyme', '${p.id}')" class="btn-outline px-3 py-1.5 text-xs font-semibold">
+              Ver Perfil
+            </button>
+            <button onclick="handleGlobalPymeChange('${p.id}'); switchTab('home');" class="btn-acero px-3 py-1.5 text-xs font-semibold">
+              Simular
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Renderizar Vista de Destacados
+    function renderDestacadosView() {
+      const utesGrid = document.getElementById('featuredUtesGrid');
+      utesGrid.innerHTML = tendersData.slice(0, 4).map(t => `
+        <div class="border-matte rounded-[3px] p-4 sm:p-5 bg-blanco space-y-3">
+          <div class="flex items-center justify-between gap-2 border-b border-carbon/15 pb-2">
+            <span class="font-mono text-xs font-bold text-acero">${t.code} · ${t.minera}</span>
+            <span class="tag-salvia font-mono text-xs font-bold px-2 py-0.5">
+              UTE: 100% Match
+            </span>
+          </div>
+          <h4 class="font-bold text-base text-carbon">${t.title}</h4>
+          
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 border border-carbon/25 p-3 bg-salvia/20 rounded-[2px] text-xs">
+            <div>
+              <span class="text-[10px] font-mono uppercase text-carbon/70 block">PyME Líder (75%)</span>
+              <strong class="text-carbon">${t.recommendedUte.pymeA}</strong>
+            </div>
+            <div>
+              <span class="text-[10px] font-mono uppercase text-carbon/70 block">PyME Aliada (+25%)</span>
+              <strong class="text-acero">${t.recommendedUte.pymeB}</strong>
+            </div>
+          </div>
+
+          <p class="text-xs text-carbon/85 leading-relaxed">
+            <strong>Fundamento técnico:</strong> ${t.recommendedUte.reason}
+          </p>
+
+          <div class="flex justify-end pt-1">
+            <button onclick="openAnalyzerModal('${t.id}')" class="btn-outline px-3.5 py-1.5 text-xs font-semibold">
+              Auditar Cláusulas del Pliego
+            </button>
+          </div>
+        </div>
+      `).join('');
+
+      const urgentTenders = tendersData.filter(t => t.urgent);
+      document.getElementById('urgentTendersGrid').innerHTML = urgentTenders.map(t => createTenderCardHTML(t)).join('');
+    }
+
+    // Renderizar Vista de Perfiles (Mineras y PyMEs)
+    function renderPerfilesView() {
+      const minContainer = document.getElementById('directoryMinerasContainer');
+      minContainer.innerHTML = minerasData.map(m => `
+        <div class="border-matte rounded-[3px] p-5 bg-blanco flex flex-col justify-between gap-4">
+          <div class="space-y-2.5">
+            <div class="flex items-start justify-between gap-2 border-b border-carbon/15 pb-2">
+              <span class="tag-acero font-mono text-[11px] px-2 py-0.5 font-semibold">${m.mineral}</span>
+              <span class="font-mono text-xs font-bold text-carbon">${m.openTendersCount} Pliego(s)</span>
+            </div>
+            <h3 class="font-bold text-lg text-carbon">${m.name}</h3>
+            <p class="text-xs text-carbon/80"><i class="fa-solid fa-location-dot text-acero mr-1"></i> ${m.department}</p>
+            <div class="bg-salvia/35 border border-carbon/30 p-2.5 rounded-[2px] text-xs">
+              <strong>Política de Acuerdo Social:</strong> ${m.compreLocal}
+            </div>
+            <div class="space-y-1 pt-1">
+              <span class="text-[11px] font-mono uppercase font-bold text-carbon/80">Estándares Requeridos:</span>
+              <ul class="list-disc list-inside text-xs text-carbon/90 space-y-0.5">
+                ${m.standards.map(s => `<li>${s}</li>`).join('')}
+              </ul>
+            </div>
+          </div>
+          <div class="flex justify-end pt-2 border-t border-carbon/15">
+            <button onclick="openProfileModal('minera', '${m.id}')" class="btn-acero px-4 py-2 text-xs font-semibold w-full sm:w-auto">
+              Ver Ficha Completa y Licitaciones
+            </button>
+          </div>
+        </div>
+      `).join('');
+
+      const pymContainer = document.getElementById('directoryPymesContainer');
+      pymContainer.innerHTML = pymesData.map(p => `
+        <div class="border-matte rounded-[3px] p-4 bg-blanco flex flex-col justify-between gap-4">
+          <div class="space-y-2.5">
+            <div class="flex items-center justify-between border-b border-carbon/15 pb-2">
+              <span class="tag-salvia font-mono text-[10px] px-2 py-0.5 font-bold">${p.repromin}</span>
+              <span class="font-mono text-xs text-carbon/80">${p.employees} emp.</span>
+            </div>
+            <div>
+              <h3 class="font-bold text-base text-carbon">${p.name}</h3>
+              <p class="text-xs font-semibold text-acero">${p.category} · ${p.location}</p>
+            </div>
+            <p class="text-xs text-carbon/85 leading-relaxed">
+              <strong>Equipamiento:</strong> ${p.equipment}
+            </p>
+            <div class="flex flex-wrap gap-1">
+              ${p.capabilities.map(c => `<span class="tag-neutral font-mono text-[10px] px-2 py-0.5">${c}</span>`).join('')}
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-2 pt-2 border-t border-carbon/15">
+            <button onclick="openProfileModal('pyme', '${p.id}')" class="btn-outline py-2 text-xs font-semibold">
+              Ver Ficha
+            </button>
+            <button onclick="handleGlobalPymeChange('${p.id}'); switchTab('home');" class="btn-acero py-2 text-xs font-semibold">
+              Usar Perfil
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function toggleDirectoryView(type) {
+      const minContainer = document.getElementById('directoryMinerasContainer');
+      const pymContainer = document.getElementById('directoryPymesContainer');
+      const btnMin = document.getElementById('btnToggleMineras');
+      const btnPym = document.getElementById('btnTogglePymes');
+
+      if (type === 'mineras') {
+        minContainer.classList.remove('hidden');
+        pymContainer.classList.add('hidden');
+        btnMin.className = 'px-4 py-2 text-xs font-semibold bg-acero text-blanco';
+        btnPym.className = 'px-4 py-2 text-xs font-semibold bg-blanco text-carbon hover:bg-salvia/40 border-l border-carbon';
+      } else {
+        minContainer.classList.add('hidden');
+        pymContainer.classList.remove('hidden');
+        pymContainer.classList.add('grid');
+        btnPym.className = 'px-4 py-2 text-xs font-semibold bg-acero text-blanco border-l border-carbon';
+        btnMin.className = 'px-4 py-2 text-xs font-semibold bg-blanco text-carbon hover:bg-salvia/40';
+      }
+    }
+
+    // =========================================================================
+    // MODAL DE PERFIL DETALLADO (MINERA O PYME)
+    // =========================================================================
+    function openProfileModal(entityType, entityId) {
+      const modal = document.getElementById('profileDetailModal');
+      const badge = document.getElementById('profileModalTypeBadge');
+      const title = document.getElementById('profileModalTitle');
+      const body = document.getElementById('profileModalBody');
+
+      if (entityType === 'minera') {
+        const m = minerasData.find(item => item.id === entityId) || minerasData[0];
+        const relatedTenders = tendersData.filter(t => t.mineraId === m.id);
+        badge.textContent = 'PERFIL DE OPERADORA MINERA';
+        title.textContent = m.name;
+
+        body.innerHTML = `
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 border-subtle p-3 bg-blanco">
+            <div>
+              <span class="text-xs text-carbon/70 block">Ubicación Geográfica</span>
+              <strong class="text-carbon">${m.department}</strong>
+            </div>
+            <div>
+              <span class="text-xs text-carbon/70 block">Producción / Etapa</span>
+              <strong class="text-acero">${m.mineral}</strong>
+            </div>
+            <div class="sm:col-span-2">
+              <span class="text-xs text-carbon/70 block">Área de Contacto</span>
+              <strong class="text-carbon">${m.contactArea}</strong>
+            </div>
+          </div>
+
+          <div class="bg-salvia/40 border border-carbon p-3 space-y-1">
+            <strong class="text-xs font-mono uppercase block text-carbon">Indicador de Desarrollo de Proveedores Locales:</strong>
+            <p class="text-carbon font-semibold">${m.compreLocal}</p>
+          </div>
+
+          <div class="space-y-1.5">
+            <strong class="text-xs font-mono uppercase block text-carbon">Estándares Exigidos en Pliegos:</strong>
+            <ul class="list-disc list-inside space-y-1 text-carbon/90">
+              ${m.standards.map(s => `<li>${s}</li>`).join('')}
+            </ul>
+          </div>
+
+          <div class="space-y-2 pt-2 border-t border-carbon/20">
+            <strong class="text-xs font-mono uppercase block text-carbon">Licitaciones Activas de esta Operadora (${relatedTenders.length}):</strong>
+            <div class="space-y-2">
+              ${relatedTenders.map(t => `
+                <div class="border border-carbon p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2 bg-blanco">
+                  <div>
+                    <span class="font-mono text-xs font-bold text-acero">${t.code} · ${t.budget}</span>
+                    <p class="font-bold text-xs sm:text-sm text-carbon">${t.title}</p>
+                  </div>
+                  <button onclick="closeProfileModal(); openAnalyzerModal('${t.id}');" class="btn-acero px-3 py-1.5 text-xs font-semibold shrink-0">
+                    Analizar Pliego
+                  </button>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      } else {
+        const p = pymesData.find(item => item.id === entityId) || pymesData[0];
+        badge.textContent = 'PERFIL DE PYME PROVEEDORA LOCAL';
+        title.textContent = p.name;
+
+        body.innerHTML = `
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 border-subtle p-3 bg-blanco">
+            <div>
+              <span class="text-xs text-carbon/70 block">Radicación</span>
+              <strong class="text-carbon">${p.location}</strong>
+            </div>
+            <div>
+              <span class="text-xs text-carbon/70 block">Rubro Principal</span>
+              <strong class="text-acero">${p.category}</strong>
+            </div>
+            <div>
+              <span class="text-xs text-carbon/70 block">Dotación Local</span>
+              <strong class="text-carbon">${p.employees} trabajadores (${p.antiguedad})</strong>
+            </div>
+          </div>
+
+          <div class="bg-salvia/40 border border-carbon p-3 flex items-center justify-between">
+            <div>
+              <span class="text-xs font-mono uppercase block text-carbon">Estado en Padrón Oficial REPROMIN:</span>
+              <strong class="text-carbon">${p.repromin}</strong>
+            </div>
+            <span class="tag-salvia font-mono text-xs px-2 py-0.5 font-bold">VERIFICADO</span>
+          </div>
+
+          <div class="space-y-1.5">
+            <strong class="text-xs font-mono uppercase block text-carbon">Certificaciones y Capacidades Homologables:</strong>
+            <div class="flex flex-wrap gap-1.5">
+              ${p.capabilities.map(c => `<span class="tag-neutral font-mono text-xs px-2.5 py-1 font-semibold">${c}</span>`).join('')}
+            </div>
+          </div>
+
+          <div class="space-y-1">
+            <strong class="text-xs font-mono uppercase block text-carbon">Infraestructura y Equipamiento Declarado:</strong>
+            <p class="text-carbon/90 leading-relaxed">${p.equipment}</p>
+          </div>
+
+          <div class="space-y-1">
+            <strong class="text-xs font-mono uppercase block text-carbon">Antecedentes en el Sector:</strong>
+            <p class="text-carbon/90 leading-relaxed">${p.history}</p>
+          </div>
+
+          <div class="flex justify-end pt-3 border-t border-carbon/20">
+            <button onclick="handleGlobalPymeChange('${p.id}'); closeProfileModal(); switchTab('home');" class="btn-acero px-4 py-2 text-xs font-semibold">
+              Simular Compatibilidad de Pliegos con esta PyME
+            </button>
+          </div>
+        `;
+      }
+
+      modal.classList.remove('hidden');
+    }
+
+    function closeProfileModal() {
+      document.getElementById('profileDetailModal').classList.add('hidden');
+    }
+
+    // =========================================================================
+    // MODAL DE ANÁLISIS IA DE PLIEGOS + GAP ANALYSIS + TRAZABILIDAD
+    // =========================================================================
+    function openAnalyzerModal(tenderId) {
+      currentModalTenderId = tenderId;
+      const tender = tendersData.find(t => t.id === tenderId) || tendersData[0];
+
+      document.getElementById('modalTenderCode').textContent = tender.code;
+      document.getElementById('modalTenderTitle').textContent = tender.title;
+      document.getElementById('modalTenderCompany').textContent = tender.minera;
+      document.getElementById('modalTenderBudget').textContent = tender.budget;
+      document.getElementById('modalTenderPages').textContent = tender.pages;
+      document.getElementById('modalTenderDeadline').textContent = tender.deadline;
+      document.getElementById('modalPenaltyText').textContent = tender.penalties;
+      document.getElementById('modalLocalPrefText').textContent = tender.localPref;
+      document.getElementById('pdfCitationBox').classList.add('hidden');
+
+      populatePymeSelectors();
+      updateModalGapAnalysis();
+
+      document.getElementById('analyzerModal').classList.remove('hidden');
+    }
+
+    function closeAnalyzerModal() {
+      document.getElementById('analyzerModal').classList.add('hidden');
+    }
+
+    function updateModalGapAnalysis() {
+      const selector = document.getElementById('modalPymeSelector');
+      if (selector && selector.value) {
+        activePymeId = selector.value;
+      }
+      const pyme = pymesData.find(p => p.id === activePymeId) || pymesData[0];
+      const tender = tendersData.find(t => t.id === currentModalTenderId) || tendersData[0];
+      const match = calculateMatch(pyme, tender);
+
+      document.getElementById('modalCompatibilityLabel').innerHTML = `Evaluando a <strong>${pyme.name}</strong> (${match.metCount} de ${match.total} requisitos cumplidos)`;
+      document.getElementById('modalCompatibilityPercent').textContent = `${match.percentage}%`;
+      document.getElementById('modalCompatibilityBar').style.width = `${match.percentage}%`;
+
+      const reqList = document.getElementById('modalRequirementsList');
+      reqList.innerHTML = match.details.map((req, idx) => `
+        <div class="p-3 rounded-[2px] border ${req.isMet ? 'bg-salvia/30 border-carbon' : 'bg-blanco border-carbon'} flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div class="flex items-start gap-2">
+            <span class="font-mono text-xs font-bold px-1.5 py-0.5 rounded-[2px] ${req.isMet ? 'bg-carbon text-salvia' : 'bg-acero text-blanco'}">
+              ${req.isMet ? 'CUMPLE' : 'BRECHA'}
+            </span>
+            <div>
+              <p class="text-xs font-bold text-carbon">${req.name}</p>
+              <span class="text-[11px] text-carbon/80">
+                ${req.isMet ? 'Acreditado en el perfil de la PyME' : 'Requisito faltante para cotizar de forma individual'}
+              </span>
+            </div>
+          </div>
+          <button onclick="showPdfCitation(${idx})" class="btn-outline self-start sm:self-center shrink-0 px-2.5 py-1 text-[11px] font-mono font-semibold">
+            Ver ${req.clause}
+          </button>
+        </div>
+      `).join('');
+
+      const missingTags = match.details.filter(d => !d.isMet).map(d => d.tag);
+      const uteBox = document.getElementById('modalUteRecommendation');
+
+      if (missingTags.length === 0) {
+        uteBox.innerHTML = `
+          <div class="text-xs space-y-0.5">
+            <strong class="text-carbon uppercase font-mono block">100% de Compatibilidad Técnica Alcanzada</strong>
+            <p class="text-carbon/90">${pyme.name} cumple todos los requisitos relevados en el pliego para presentar oferta.</p>
+          </div>
+        `;
+      } else {
+        const partner = pymesData.find(other => 
+          other.id !== pyme.id && missingTags.some(tag => other.capabilities.includes(tag))
+        ) || pymesData.find(other => other.id !== pyme.id);
+
+        uteBox.innerHTML = `
+          <div class="space-y-1 text-xs max-w-xl">
+            <span class="font-mono text-[10px] uppercase font-bold text-acero block">
+              Sugerencia de Consorcio / UTE Local
+            </span>
+            <p class="text-carbon font-bold">
+              Asociarse con ${partner.name} (${partner.location}) para cubrir: ${missingTags.join(', ')}.
+            </p>
+            <p class="text-carbon/85">
+              Mediante alianza consorcial entre ambas PyMEs de San Juan, la calificación pre-licitatoria pasa del <strong>${match.percentage}% al 100%</strong>.
+            </p>
+          </div>
+          <button onclick="simulateUte100()" class="btn-carbon shrink-0 px-3.5 py-2 text-xs font-semibold">
+            Simular UTE 100%
+          </button>
+        `;
+      }
+    }
+
+    function showPdfCitation(reqIndex) {
+      const tender = tendersData.find(t => t.id === currentModalTenderId) || tendersData[0];
+      const req = tender.requirements[reqIndex];
+      if (!req) return;
+
+      const box = document.getElementById('pdfCitationBox');
+      document.getElementById('pdfCitationHeader').textContent = `Trazabilidad Documental · ${tender.code} · ${req.clause}`;
+      document.getElementById('pdfCitationText').textContent = req.excerpt;
+      box.classList.remove('hidden');
+    }
+
+    function simulateUte100() {
+      document.getElementById('modalCompatibilityPercent').textContent = '100% (UTE)';
+      document.getElementById('modalCompatibilityBar').style.width = '100%';
+    }
+
+    // Simulador de Subida de Pliego PDF
+    function openUploadModal() {
+      document.getElementById('uploadProgressBox').classList.add('hidden');
+      document.getElementById('uploadModal').classList.remove('hidden');
+    }
+
+    function closeUploadModal() {
+      document.getElementById('uploadModal').classList.add('hidden');
+    }
+
+    function runSimulatedPdfUpload() {
+      const box = document.getElementById('uploadProgressBox');
+      const step = document.getElementById('uploadStepLabel');
+      const pct = document.getElementById('uploadPercentLabel');
+      const bar = document.getElementById('uploadBarFill');
+
+      box.classList.remove('hidden');
+      bar.style.width = '35%';
+      step.textContent = '1/3 Extrayendo texto e índice (OCR Local)...';
+      pct.textContent = '35%';
+
+      setTimeout(() => {
+        bar.style.width = '75%';
+        step.textContent = '2/3 Verificando cláusulas y normas ISO...';
+        pct.textContent = '75%';
+      }, 500);
+
+      setTimeout(() => {
+        bar.style.width = '100%';
+        step.textContent = '3/3 Pliego procesado correctamente.';
+        pct.textContent = '100%';
+      }, 1000);
+
+      setTimeout(() => {
+        closeUploadModal();
+        openAnalyzerModal('LIC-JOS-2026-09');
+      }, 1400);
+    }
+  </script>
+</body>
+</html>
